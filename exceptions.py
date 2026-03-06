@@ -1,8 +1,5 @@
 """
 exceptions.py — Custom exception hierarchy for the trading bot.
-
-All bot-specific errors inherit from BotError so callers can catch
-just that base class when needed.
 """
 
 
@@ -21,7 +18,7 @@ class ValidationError(BotError):
 class APIError(BotError):
     """Raised when the Binance REST API returns an error response."""
 
-    def __init__(self, message: str, status_code: int | None = None, binance_code: int | None = None):
+    def __init__(self, message: str, status_code=None, binance_code=None):
         super().__init__(message)
         self.status_code = status_code
         self.binance_code = binance_code

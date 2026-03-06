@@ -1,10 +1,5 @@
 """
 logger.py — Structured, rotating JSON logger for the trading bot.
-
-Usage:
-    from logger import get_logger
-    log = get_logger(__name__)
-    log.info("Order placed", extra={"order_id": 12345})
 """
 
 import json
@@ -16,8 +11,6 @@ from config import Config
 
 
 class JsonFormatter(logging.Formatter):
-    """Emit each log record as a single-line JSON object."""
-
     def format(self, record: logging.LogRecord) -> str:
         payload = {
             "ts": self.formatTime(record, "%Y-%m-%dT%H:%M:%S"),
@@ -27,7 +20,6 @@ class JsonFormatter(logging.Formatter):
         }
         if record.exc_info:
             payload["exc"] = self.formatException(record.exc_info)
-        # Merge any extra keyword args passed via extra={}
         for key, val in record.__dict__.items():
             if key not in logging.LogRecord.__dict__ and not key.startswith("_"):
                 payload[key] = val
@@ -35,15 +27,13 @@ class JsonFormatter(logging.Formatter):
 
 
 def get_logger(name: str = "bot") -> logging.Logger:
-    """Return (or create) a named logger with JSON file + plain-text console handlers."""
     logger = logging.getLogger(name)
     if logger.handlers:
-        return logger  # already configured
+        return logger
 
     level = getattr(logging, Config.LOG_LEVEL.upper(), logging.DEBUG)
     logger.setLevel(level)
 
-    # ── File handler (rotating, JSON) ─────────────────────────────────────────
     os.makedirs(os.path.dirname(Config.LOG_FILE), exist_ok=True)
     fh = RotatingFileHandler(
         Config.LOG_FILE,
@@ -55,7 +45,6 @@ def get_logger(name: str = "bot") -> logging.Logger:
     fh.setLevel(logging.DEBUG)
     logger.addHandler(fh)
 
-    # ── Console handler (human-readable) ──────────────────────────────────────
     ch = logging.StreamHandler()
     ch.setFormatter(
         logging.Formatter(
