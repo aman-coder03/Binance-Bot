@@ -20,7 +20,7 @@ from logger import get_logger
 
 log = get_logger(__name__)
 
-_SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
+_SYMBOL_RE = re.compile(r"^[A-Z0-9]{6,20}$")
 
 
 class _TokenBucket:
